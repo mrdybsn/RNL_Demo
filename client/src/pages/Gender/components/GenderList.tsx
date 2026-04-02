@@ -121,7 +121,6 @@ const GenderList = () => {
                             <TableCell className="px-4 py-3 text-start">
                                 {gender.action}
                             </TableCell>
-
                         </TableRow>
                     ))};
                 </TableBody>
