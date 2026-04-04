@@ -122,7 +122,7 @@ const GenderList = () => {
                                 {gender.action}
                             </TableCell>
                         </TableRow>
-                    ))};
+                    ))}
                 </TableBody>
             </Table>
         </div>
