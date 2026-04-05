@@ -66,10 +66,10 @@ const FloatingLabelInput: FC<FloatingLabelInputProps>
                 <span className="text-red-600 ml-1">*</span>
             )}
         </label>
+    </div>
         {errors && errors.length > 0 && (
             <span className="text-red-600 text-xs">{errors[0]}</span>
         )}
-    </div>
     </>
   )
 }
