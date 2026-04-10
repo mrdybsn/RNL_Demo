@@ -1,44 +1,63 @@
-import type { FC } from "react"
+import { useEffect, useState, type FC } from "react"
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "../../../components/Table"
+import UserService from "../../../services/UserService";
+import Spinner from "../../../components/Spinner/Spinner";
+import type { UserColumns } from "../../../interfaces/UserColumns";
 
 interface UserListProps {
     onAddUser: () => void
 }
 
 const UserList: FC<UserListProps> = ({onAddUser}) => {
-    const users = [
-        {
-            user_id: 1,
-            first_name: "John",
-            middle_name: "",
-            last_name: "Doe",
-            suffix_name: "",
-            gender: "Male",
-            address: "Roxas City",
-            action: (
-                <>
-                <div className="flex gap-4">
-                    <div>
-                        <button 
-                            type="button"
-                            className="text-green-600 hover:underline font-medium"
-                        >
-                            Edit
-                        </button>
-                    </div>
-                    <div>
-                        <button 
-                            type="button"
-                            className="text-red-600 hover:underline font-medium"
-                        >
-                            Delete
-                        </button>
-                    </div>
-                </div>
-                </>
-            )
+    const [loadingUsers, setLoadingUsers] = useState(false);
+    const [users, setUsers] = useState<UserColumns  []>([]);
+
+    const handleLoadUsers = async () => {
+        try {
+            setLoadingUsers(true);
+
+            const res = await UserService.loadUsers();
+
+            if (res.status === 200) {
+                setUsers(res.data.users);
+            }else{
+                console.error(
+                    "Unexpected status error occured during loading users: ",
+                    res.status
+                );
+            }
+        } catch (error) {
+            console.error(
+                "Unexpected server error occured during loading users: ",
+                error
+            );
+        } finally {
+            setLoadingUsers(false);
         }
-    ]
+    };
+
+    const handleUserFullNameFormat = (user: UserColumns) => {
+        let fullName = "";
+
+        if (user.middle_name) {
+            fullName = `${user.last_name}, ${user.first_name} ${
+                user.first_name
+            } ${user.middle_name.charAt(0)}.`;
+        } else {
+            fullName = `${user.last_name}, ${user.first_name}`;
+        }
+
+        if (user.suffix_name) {
+            fullName += ` ${user.suffix_name}`;
+        }
+
+        return fullName;
+    };
+
+    useEffect(() => {
+        handleLoadUsers();
+    }, []);
+
   return (
     <>
     <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
@@ -65,31 +84,25 @@ const UserList: FC<UserListProps> = ({onAddUser}) => {
                             isHeader
                             className="px-5 py-3 font-medium text-start"
                         >
-                            First Name
-                        </TableCell>
-                        <TableCell
-                            isHeader
-                            className="px-5 py-3 font-medium text-start"
-                        >
-                            Middle Name
-                        </TableCell>
-                        <TableCell
-                            isHeader
-                            className="px-5 py-3 font-medium text-start"
-                        >
-                            Last Name
-                        </TableCell>
-                        <TableCell
-                            isHeader
-                            className="px-5 py-3 font-medium text-start"
-                        >
-                            Suffix Name
+                            Full Name
                         </TableCell>
                         <TableCell
                             isHeader
                             className="px-5 py-3 font-medium text-start"
                         >
                             Gender
+                        </TableCell>
+                        <TableCell
+                            isHeader
+                            className="px-5 py-3 font-medium text-start"
+                        >
+                            Birth Date
+                        </TableCell>
+                        <TableCell
+                            isHeader
+                            className="px-5 py-3 font-medium text-start"
+                        >
+                            Age
                         </TableCell>
                         <TableCell
                             isHeader
@@ -100,31 +113,47 @@ const UserList: FC<UserListProps> = ({onAddUser}) => {
                     </TableRow>
                 </TableHeader>
                 <TableBody className="divide-y divide-gray-100 text-gray-500 text-sm">
-                    {users.map((user, index) => (
-                        <TableRow className="hover:bg-gray-100" key={index}>
-                            <TableCell className="px-4 py-3 text-center">
-                                {user.user_id}
-                            </TableCell>                          
-                            <TableCell className="px-4 py-3 text-start">
-                                {user.first_name}
-                            </TableCell>
-                            <TableCell className="px-4 py-3 text-start">
-                                {user.middle_name}
-                            </TableCell>
-                            <TableCell className="px-4 py-3 text-start">
-                                {user.last_name}
-                            </TableCell>
-                            <TableCell className="px-4 py-3 text-start">
-                                {user.suffix_name}
-                            </TableCell>
-                            <TableCell className="px-4 py-3 text-start">
-                                {user.gender}
-                            </TableCell>
-                            <TableCell className="px-4 py-3 text-start">
-                                {user.action}
+                    {loadingUsers ? (
+                        <TableRow>
+                            <TableCell colSpan={6} className="px-4 py-3 text-center">
+                                <Spinner size="md" />
                             </TableCell>
                         </TableRow>
-                    ))}
+                    ) : (
+                        users.map((user, index) => (
+                            <TableRow className="hover:bg-gray-100" key={index}>
+                                <TableCell className="px-4 py-3 text-center">
+                                    {index + 1}
+                                </TableCell>
+                                <TableCell className="px-4 py-3 text-start">
+                                    {handleUserFullNameFormat(user)}
+                                </TableCell>
+                                <TableCell className="px-4 py-3 text-start">
+                                    {user.gender.gender}
+                                </TableCell>
+                                <TableCell className="px-4 py-3 text-start">
+                                    {user.age}
+                                </TableCell>
+                                <TableCell className="px-4 py-3 text-start">
+                                    <div className="flex gap-4">
+                                        <button 
+                                            type="button" 
+                                            className="text-green-600 font-medium cursor-pointer hover:underline"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button 
+                                            type="button" 
+                                            className="text-red-600 font-medium cursor-pointer hover:underline"
+                                        >
+                                            Delete
+                                        </button>
+
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ))
+                    ) }
                 </TableBody>
             </Table>
         </div>
