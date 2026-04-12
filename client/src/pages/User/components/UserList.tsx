@@ -135,6 +135,9 @@ const UserList: FC<UserListProps> = ({onAddUser, onEditUser, onDeleteUser, refre
                                     {user.gender.gender}
                                 </TableCell>
                                 <TableCell className="px-4 py-3 text-start">
+                                    {user.birth_date}
+                                </TableCell>
+                                <TableCell className="px-4 py-3 text-start">
                                     {user.age}
                                 </TableCell>
                                 <TableCell className="px-4 py-3 text-start">
