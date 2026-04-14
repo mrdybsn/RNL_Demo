@@ -38,11 +38,12 @@ class DatabaseSeeder extends Seeder
             'last_name' => 'User',
             'suffix_name' => null,
             'gender_id' => Gender::inRandomOrder()->first()->gender_id,
-            'birth_Date' => $birthDate,
+            'birth_date' => $birthDate,
             'age' => $age,
-            'username' => 'admin12345',
-            'password' => 'admin12345'
-
+            'username' => 'adminuser',
+            'password' => 'adminuser123'
         ]);
+
+        User::factory(100)->create();
     }
 }
