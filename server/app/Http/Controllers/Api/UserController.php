@@ -50,7 +50,7 @@ class UserController extends Controller
     public function storeUser(Request $request)
     {
         $validated = $request->validate([
-            'add_user_profile_picture' => ['nullable', 'image', 'mimes:png, jpg, jpeg'],
+            'add_user_profile_picture' => ['nullable', 'image', 'mimes:png,jpg,jpeg'],
             'first_name' => ['required', 'max:55'],
             'middle_name' => ['nullable', 'max:55'],
             'last_name' => ['required', 'max:55'],
@@ -93,7 +93,7 @@ class UserController extends Controller
 
     public function updateUser(Request $request, User $user){
         $validated = $request->validate([
-            'edit_user_profile_picture' => ['nullable', 'image', 'mimes:png, jpg, jpeg'],
+            'edit_user_profile_picture' => ['nullable', 'image', 'mimes:png,jpg,jpeg'],
             'first_name' => ['required', 'max:55'],
             'middle_name' => ['nullable', 'max:55'],
             'last_name' => ['required', 'max:55'],
